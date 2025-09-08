@@ -189,7 +189,7 @@ if "projects" not in st.session_state:
     st.session_state.projects = {}
 
 # Sidebar para navegación y configuración
-st.sidebar.title("🎨 Creative AI Studio")
+st.sidebar.title("🤖🎨 Creative AI Studio")
 st.sidebar.markdown("---")
 
 # Mostrar información de deploy
@@ -230,7 +230,7 @@ page = st.sidebar.radio(
 )
 
 # Página principal
-st.title("🎨 Creative AI Studio")
+st.title("🤖🎨 CREATIVE AI STUDIO 🤖🎨")
 st.markdown("*Plataforma integral de creación de contenido con IA*")
 
 # =================== PÁGINA: GENERACIÓN DE IMÁGENES ===================
