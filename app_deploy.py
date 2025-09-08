@@ -80,9 +80,9 @@ def generate_image(prompt, style="None"):
     try:
         body = {
             "text_prompts": [{"text": prompt}],
-            "cfg_scale": 10,
+            "cfg_scale": 20,
             "seed": 0,
-            "steps": 50,
+            "steps": 100,
         }
         
         if style != "None":
