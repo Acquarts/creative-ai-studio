@@ -10,8 +10,8 @@ import os
 
 # Configuración de la página
 st.set_page_config(
-    page_title="🎨 Creative AI Studio",
-    page_icon="🎨",
+    page_title="🤖🎨 CREATIVE AI STUDIO 🤖🎨",
+    page_icon="🤖🎨",
     layout="wide",
     initial_sidebar_state="expanded"
 )
