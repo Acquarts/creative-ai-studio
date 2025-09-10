@@ -1416,7 +1416,7 @@ Immediate action recommended para capture first-mover advantage en rapidly evolv
 
 ---
 
-**Documento preparado por:** [Nombre del Estudiante]  
+**Documento preparado por:** Adrián Zambrana  
 **Programa:** Master en Inteligencia Artificial  
 **Institución:** Instituto Europeo de Posgrado  
 **Fecha:** Septiembre 2025  
