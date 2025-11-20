@@ -47,7 +47,7 @@ STYLE_PRESETS = [
 
 # Funciones para generación de imágenes
 def generate_image(prompt, style="None"):
-    """Genera imagen usando Stable Image Core"""
+    """Genera imagen usando Amazon Titan Image Generator v2"""
     try:
         # Agregar estilo al prompt si se seleccionó uno
         enhanced_prompt = prompt
@@ -75,16 +75,25 @@ def generate_image(prompt, style="None"):
             if style_text:
                 enhanced_prompt = f"{prompt}, {style_text}"
 
-        # Configuración para Stable Image Core
+        # Configuración para Amazon Titan Image Generator v2
         body = {
-            "prompt": enhanced_prompt,
-            "aspect_ratio": "1:1",
-            "output_format": "png"
+            "taskType": "TEXT_IMAGE",
+            "textToImageParams": {
+                "text": enhanced_prompt
+            },
+            "imageGenerationConfig": {
+                "numberOfImages": 1,
+                "quality": "standard",
+                "height": 768,
+                "width": 768,
+                "cfgScale": 8.0,
+                "seed": 0
+            }
         }
 
         response = bedrock_runtime.invoke_model(
             body=json.dumps(body),
-            modelId="stability.stable-image-core-v1:0",
+            modelId="amazon.titan-image-generator-v2:0",
             accept="application/json",
             contentType="application/json"
         )
