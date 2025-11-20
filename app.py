@@ -7,6 +7,10 @@ from PIL import Image
 import time
 from datetime import datetime
 import os
+from dotenv import load_dotenv
+
+# Cargar variables de entorno desde .env
+load_dotenv()
 
 # Configuración de la página
 st.set_page_config(
