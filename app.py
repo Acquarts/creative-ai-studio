@@ -47,29 +47,52 @@ STYLE_PRESETS = [
 
 # Funciones para generación de imágenes
 def generate_image(prompt, style="None"):
-    """Genera imagen usando Stable Diffusion"""
+    """Genera imagen usando Stable Image Core"""
     try:
-        body = {
-            "text_prompts": [{"text": prompt}],
-            "cfg_scale": 20, #10
-            "seed": 0,
-            "steps": 100, #50
-        }
-        
+        # Agregar estilo al prompt si se seleccionó uno
+        enhanced_prompt = prompt
         if style != "None":
-            body["style_preset"] = style
-            
+            style_descriptions = {
+                "3d-model": "3D rendered model style",
+                "analog-film": "analog film photography style",
+                "anime": "anime cartoon style",
+                "cinematic": "cinematic movie style",
+                "comic-book": "comic book illustration style",
+                "digital-art": "digital art style",
+                "enhance": "enhanced and detailed",
+                "fantasy-art": "fantasy art style",
+                "isometric": "isometric view style",
+                "line-art": "line art drawing style",
+                "low-poly": "low poly 3D style",
+                "modeling-compound": "clay modeling style",
+                "neon-punk": "neon punk cyberpunk style",
+                "origami": "origami paper art style",
+                "photographic": "photographic realistic style",
+                "pixel-art": "pixel art retro style",
+                "tile-texture": "seamless tile texture style"
+            }
+            style_text = style_descriptions.get(style, "")
+            if style_text:
+                enhanced_prompt = f"{prompt}, {style_text}"
+
+        # Configuración para Stable Image Core
+        body = {
+            "prompt": enhanced_prompt,
+            "aspect_ratio": "1:1",
+            "output_format": "png"
+        }
+
         response = bedrock_runtime.invoke_model(
             body=json.dumps(body),
-            modelId="stability.stable-diffusion-xl-v1-0",
+            modelId="stability.stable-image-core-v1:0",
             accept="application/json",
             contentType="application/json"
         )
-        
+
         response_body = json.loads(response.get("body").read())
-        image_data = response_body.get("artifacts")[0].get("base64")
+        image_data = response_body.get("images")[0]
         return base64_to_image(image_data)
-        
+
     except Exception as e:
         st.error(f"Error generando imagen: {str(e)}")
         return None
