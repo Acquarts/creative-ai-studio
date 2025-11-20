@@ -76,29 +76,61 @@ STYLE_PRESETS = [
 
 # Funciones para generación de imágenes
 def generate_image(prompt, style="None"):
-    """Genera imagen usando Stable Diffusion"""
+    """Genera imagen usando Amazon Titan Image Generator v2"""
     try:
-        body = {
-            "text_prompts": [{"text": prompt}],
-            "cfg_scale": 20,
-            "seed": 0,
-            "steps": 100,
-        }
-        
+        # Agregar estilo al prompt si se seleccionó uno
+        enhanced_prompt = prompt
         if style != "None":
-            body["style_preset"] = style
-            
+            style_descriptions = {
+                "3d-model": "3D rendered model style",
+                "analog-film": "analog film photography style",
+                "anime": "anime cartoon style",
+                "cinematic": "cinematic movie style",
+                "comic-book": "comic book illustration style",
+                "digital-art": "digital art style",
+                "enhance": "enhanced and detailed",
+                "fantasy-art": "fantasy art style",
+                "isometric": "isometric view style",
+                "line-art": "line art drawing style",
+                "low-poly": "low poly 3D style",
+                "modeling-compound": "clay modeling style",
+                "neon-punk": "neon punk cyberpunk style",
+                "origami": "origami paper art style",
+                "photographic": "photographic realistic style",
+                "pixel-art": "pixel art retro style",
+                "tile-texture": "seamless tile texture style"
+            }
+            style_text = style_descriptions.get(style, "")
+            if style_text:
+                enhanced_prompt = f"{prompt}, {style_text}"
+
+        # Configuración para Amazon Titan Image Generator v2
+        body = {
+            "taskType": "TEXT_IMAGE",
+            "textToImageParams": {
+                "text": enhanced_prompt
+            },
+            "imageGenerationConfig": {
+                "numberOfImages": 1,
+                "quality": "standard",
+                "height": 768,
+                "width": 768,
+                "cfgScale": 8.0,
+                "seed": 0
+            }
+        }
+
         response = bedrock_runtime.invoke_model(
             body=json.dumps(body),
-            modelId="stability.stable-diffusion-xl-v1",
+            modelId="amazon.titan-image-generator-v2:0",
             accept="application/json",
             contentType="application/json"
         )
-        
+
         response_body = json.loads(response.get("body").read())
-        image_data = response_body.get("artifacts")[0].get("base64")
+        image_data = response_body.get("images")[0]
         return base64_to_image(image_data)
-        
+
     except Exception as e:
         error_msg = str(e)
         if "AccessDeniedException" in error_msg:
@@ -107,11 +139,9 @@ def generate_image(prompt, style="None"):
             **Para solucionarlo:**
             1. Ve a [AWS Bedrock Console](https://console.aws.amazon.com/bedrock/)
             2. Asegúrate de estar en la región **us-east-1**
-            3. Click "**Model access**" en el menú izquierdo
-            4. Click "**Manage model access**"
-            5. Habilita "**Stable Diffusion XL 1.0**"
-            6. Click "**Request model access**"
-            7. Espera unos minutos hasta que aparezca "**Access granted**"
+            3. En el menú lateral: "Configurar y aprender" → "Acceso a modelos"
+            4. Habilita "**Amazon Titan Image Generator v2**"
+            5. Los modelos se activan automáticamente al primer uso
             """)
         elif "ValidationException" in error_msg:
             st.error(f"❌ Error de validación: {error_msg}")
